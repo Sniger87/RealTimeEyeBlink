@@ -10,6 +10,8 @@ Detector::Detector(const std::string shapePredictorFilePath)
 	shapePredictor = new dlib::shape_predictor();
 	dlib::deserialize(shapePredictorFilePath) >> *shapePredictor;
 	resizedWidth = RESIZED_WIDTH;
+	flipFrame = FLIP_FRAME;
+	searchPupil = SEARCH_PUPIL;
 }
 
 void Detector::SetResizedWidth(const int width)
@@ -30,6 +32,16 @@ void Detector::SetFlipFrame(const bool flip)
 bool Detector::GetFlipFrame() const
 {
 	return flipFrame;
+}
+
+void Detector::SetSearchPupil(const bool search)
+{
+	searchPupil = search;
+}
+
+bool Detector::GetSearchPupil() const
+{
+	return searchPupil;
 }
 
 bool Detector::IsFaceFound() const
@@ -136,10 +148,12 @@ void Detector::Detect(cv::Mat &frame)
 					// Set Landmarks
 					face->SetShape(Helpers::ScaleUp((*shapePredictor)(cvImageSmall, Helpers::ScaleDown(face->GetFace(), scale)), scale));
 					// Find Pupils
-					face->SetLeftPupil(Helpers::ScaleUp(Helpers::FindPupilCenter(gray1Channel,
-						Helpers::ScaleDown(face->GetLeftEyeRect(), scale)), scale));
-					face->SetRightPupil(Helpers::ScaleUp(Helpers::FindPupilCenter(gray1Channel,
-						Helpers::ScaleDown(face->GetRightEyeRect(), scale)), scale));
+					if (searchPupil) {
+						face->SetLeftPupil(Helpers::ScaleUp(Helpers::FindPupilCenter(gray1Channel,
+							Helpers::ScaleDown(face->GetLeftEyeRect(), scale)), scale));
+						face->SetRightPupil(Helpers::ScaleUp(Helpers::FindPupilCenter(gray1Channel,
+							Helpers::ScaleDown(face->GetRightEyeRect(), scale)), scale));
+					}
 					// Check for blink
 					face->CheckBlink();
 				}

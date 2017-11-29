@@ -24,9 +24,11 @@ public:
 	void					operator >> (cv::Mat &frame);
 	void                    SetResizedWidth(const int width);
 	void					SetFlipFrame(const bool flip);
+	void					SetSearchPupil(const bool search);
 	int                     GetResizedWidth() const;
 	int						GetTotalBlinks() const;
 	bool					GetFlipFrame() const;
+	bool					GetSearchPupil() const;
 	bool					IsFaceFound() const;
 
 private:
@@ -36,4 +38,5 @@ private:
 	int								resizedWidth = 0;
 	int								countOfFrames = 0;
 	bool							flipFrame;
+	bool							searchPupil;
 };
